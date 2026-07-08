@@ -85,21 +85,20 @@ function DarkButton({
   );
 }
 
-function LightButton({ label, icon }: { label: string; icon?: string }) {
+function ProductButton({ label, icon }: { label: string; icon?: string }) {
   return (
     <button
       type="button"
-      className="flex items-center justify-center overflow-hidden rounded-[10px] border border-[rgba(26,26,26,0.09)] px-2 py-1.5"
-      style={{ background: "linear-gradient(to bottom, #fafafa, #f5f5f5)" }}
+      className="product-button relative flex items-center justify-center overflow-hidden rounded-[10px] px-2 py-1.5 shadow-[inset_0px_1px_0.5px_0px_rgba(255,255,255,0.28)]"
     >
-      <span className="flex items-center">
+      <span className="relative z-10 flex items-center">
         {icon && (
           <span className="size-5 shrink-0">
             <img src={icon} alt="" className="block size-full" />
           </span>
         )}
         <span className="flex items-center justify-center px-1">
-          <span className="whitespace-nowrap text-center text-sm font-medium tracking-[-0.15px] text-[rgba(26,26,26,0.6)]">
+          <span className="whitespace-nowrap text-center text-sm font-medium tracking-[-0.15px] text-[rgba(255,255,255,0.8)]">
             {label}
           </span>
         </span>
@@ -111,7 +110,38 @@ function LightButton({ label, icon }: { label: string; icon?: string }) {
 /* ---------- card primitives ---------- */
 
 const cardClass =
-  "flex h-full flex-1 min-w-0 flex-col justify-between rounded-[24px] border border-[rgba(26,26,26,0.09)] bg-white/60 p-5 backdrop-blur-[10px]";
+  "flex h-full flex-1 min-w-0 flex-col justify-between rounded-[24px] border border-[rgba(26,26,26,0.09)] bg-white/60 p-5 text-left backdrop-blur-[10px]";
+
+const interactiveCardClass =
+  `${cardClass} metric-card cursor-pointer transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-[rgba(26,26,26,0.16)] hover:bg-white/80 hover:shadow-[0_8px_24px_rgba(26,26,26,0.08)] active:translate-y-0 active:bg-white/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(26,26,26,0.12)]`;
+
+function ClickableCard({
+  label,
+  onClick,
+  children,
+}: {
+  label: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${label} breakdown`}
+      onClick={onClick}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onClick?.();
+        }
+      }}
+      className={interactiveCardClass}
+    >
+      {children}
+    </div>
+  );
+}
 
 function CardLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -138,9 +168,9 @@ function IconBadge({ src, bg }: { src: string; bg: string }) {
 
 /* ---------- individual cards ---------- */
 
-function AiScoreCard() {
+function AiScoreCard({ onClick }: { onClick?: () => void }) {
   return (
-    <div className={cardClass}>
+    <ClickableCard label="AI score" onClick={onClick}>
       <div className="flex w-full items-start justify-between">
         <CardLabel>AI score</CardLabel>
         <div className="size-10 shrink-0">
@@ -162,7 +192,7 @@ function AiScoreCard() {
           </span>
         </div>
       </div>
-    </div>
+    </ClickableCard>
   );
 }
 
@@ -190,7 +220,7 @@ function ProgressTrack({
   );
 }
 
-function CompareCard() {
+function CompareCard({ onClick }: { onClick?: () => void }) {
   const logos = [
     asset("logo-1.svg"),
     asset("chatgpt.svg"),
@@ -200,7 +230,7 @@ function CompareCard() {
     asset("logo-3.svg"),
   ];
   return (
-    <div className={cardClass}>
+    <ClickableCard label="You vs the others" onClick={onClick}>
       <CardLabel>You vs the others</CardLabel>
       <div className="flex w-full flex-col gap-4">
         {/* High */}
@@ -244,14 +274,14 @@ function CompareCard() {
           <ProgressTrack fill="49%" color="rgba(26,26,26,0.6)" border />
         </div>
       </div>
-    </div>
+    </ClickableCard>
   );
 }
 
-function CoverageCard() {
+function CoverageCard({ onClick }: { onClick?: () => void }) {
   const segments = ["#18c280", "#18c280", "#fbbf24", "#f87171", "#f87171"];
   return (
-    <div className={cardClass}>
+    <ClickableCard label="Coverage" onClick={onClick}>
       <div className="flex w-full items-start justify-between">
         <CardLabel>Coverage</CardLabel>
         <IconBadge src={asset("warning-triangle-2.svg")} bg="#fef3c7" />
@@ -278,13 +308,13 @@ function CoverageCard() {
           ))}
         </div>
       </div>
-    </div>
+    </ClickableCard>
   );
 }
 
-function TestResultsCard() {
+function TestResultsCard({ onClick }: { onClick?: () => void }) {
   return (
-    <div className={cardClass}>
+    <ClickableCard label="Test results" onClick={onClick}>
       <div className="flex w-full items-start justify-between">
         <CardLabel>Test results</CardLabel>
         <IconBadge src={asset("checkmark.svg")} bg="rgba(16,104,68,0.06)" />
@@ -302,13 +332,13 @@ function TestResultsCard() {
           11 avg messages
         </p>
       </div>
-    </div>
+    </ClickableCard>
   );
 }
 
-function NextStepCard() {
+function NextStepCard({ onClick }: { onClick?: () => void }) {
   return (
-    <div className={cardClass}>
+    <ClickableCard label="Next step" onClick={onClick}>
       <div className="flex w-full items-start justify-between">
         <CardLabel>Next step</CardLabel>
         <IconBadge src={asset("checkmark.svg")} bg="rgba(16,104,68,0.06)" />
@@ -317,13 +347,19 @@ function NextStepCard() {
         <p className="whitespace-nowrap text-base font-medium leading-6 tracking-[-0.5px] text-[rgba(26,26,26,0.8)]">
           Train 2 areas before launch
         </p>
-        <DarkButton
-          label="Train now"
-          icon={asset("search-icon-dark.svg")}
+        <div
           className="w-full"
-        />
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+        >
+          <DarkButton
+            label="Train now"
+            icon={asset("search-icon-dark.svg")}
+            className="w-full"
+          />
+        </div>
       </div>
-    </div>
+    </ClickableCard>
   );
 }
 
@@ -386,7 +422,7 @@ export default function AiBlueprint() {
       </header>
 
       {/* centered text */}
-      <div className="absolute left-1/2 top-[75px] z-10 flex w-[411px] max-w-[calc(100%-40px)] -translate-x-1/2 flex-col items-center gap-6">
+      <div className="absolute left-1/2 z-10 mt-20 flex w-[411px] max-w-[calc(100%-40px)] -translate-x-1/2 flex-col items-center gap-6 pt-16">
         <p
           data-intro
           className="w-full text-center text-base font-medium leading-7 tracking-[-0.15px] text-black"
@@ -419,9 +455,9 @@ export default function AiBlueprint() {
             </p>
           </div>
           <div data-intro style={intro(6.85)}>
-            <LightButton
+            <ProductButton
               label="Improve your AI"
-              icon={asset("search-icon.svg")}
+              icon={asset("search-icon-white.svg")}
             />
           </div>
         </div>

@@ -22,6 +22,38 @@ body,
   background: #ffffff;
 }
 
+/* ---------- product button (Improve your AI) ---------- */
+/* background-image can't be animated, so hover/active overlays live on
+   pseudo-elements whose opacity transitions smoothly instead. */
+.product-button {
+  background-image: linear-gradient(180deg, #737373 0%, #404040 100%);
+}
+.product-button::before,
+.product-button::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.18s ease;
+}
+/* hover: 20% white overlay — button lightens */
+.product-button::before {
+  background: rgba(255, 255, 255, 0.2);
+}
+/* active/click: 60% dark overlay — button darkens */
+.product-button::after {
+  background: rgba(26, 26, 26, 0.6);
+}
+.product-button:hover::before {
+  opacity: 1;
+}
+.product-button:active::after {
+  opacity: 1;
+}
+
 /* ---------- intro load animations ---------- */
 /* sphere is born small in the screen center, holds ~3s, then slowly grows +
    travels down to its resting bottom-dome position. total 5.2s → hold ends
@@ -122,6 +154,9 @@ body,
 .cards-in > * {
   animation: riseFade 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+.cards-in:hover > .metric-card:not(:hover) {
+  opacity: 0.85;
+}
 .cards-in > *:nth-child(1) {
   animation-delay: 5.45s;
 }
@@ -145,6 +180,12 @@ body,
     opacity: 1 !important;
     transform: none !important;
     filter: none !important;
+  }
+  .metric-card {
+    transition: none !important;
+  }
+  .cards-in:hover > .metric-card:not(:hover) {
+    opacity: 1;
   }
   /* keep the orb at its resting bottom-dome position without animating */
   .orb-anim {
