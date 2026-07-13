@@ -175,10 +175,10 @@ export default function OrbSphere({
       canvas.height = Math.round(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       // resizing clears the canvas — redraw immediately in static mode
-      if (prefersReduced) draw(0);
+      if (prefersReduced) draw();
     };
 
-    const draw = (dt: number) => {
+    const draw = () => {
       if (!w || !h) return;
       ctx.clearRect(0, 0, w, h);
 
@@ -259,7 +259,7 @@ export default function OrbSphere({
         quat = qNorm(qMul(dqSpin, quat));
       }
       breatheTime += dt;
-      draw(dt);
+      draw();
       raf = requestAnimationFrame(loop);
     };
 
@@ -268,7 +268,7 @@ export default function OrbSphere({
     ro.observe(canvas);
 
     if (prefersReduced) {
-      draw(0);
+      draw();
     } else {
       last = performance.now();
       raf = requestAnimationFrame(loop);
